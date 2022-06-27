@@ -1,0 +1,816 @@
+:: ACCESS LOG       ====>
++-------+-----+-------+-----+-----+-----+--------+------------------------------+-------+-------+---------+-------+-------+-------+-------+--------+-----------+------------+---------------+------------+
+| COUNT | 1XX |  2XX  | 3XX | 4XX | 5XX | METHOD |             URI              |  MIN  |  MAX  |   SUM   |  AVG  |  P90  |  P95  |  P99  | STDDEV | MIN(BODY) | MAX(BODY)  |   SUM(BODY)   | AVG(BODY)  |
++-------+-----+-------+-----+-----+-----+--------+------------------------------+-------+-------+---------+-------+-------+-------+-------+--------+-----------+------------+---------------+------------+
+| 75021 |   0 | 74538 |   0 | 483 |   0 | POST   | /api/condition/[0-9a-zA-Z]+  | 0.004 | 0.108 | 484.606 | 0.006 | 0.024 | 0.032 | 0.080 |  0.015 |     0.000 |     14.000 |       224.000 |      0.003 |
+|  7531 |   0 |  6779 |   0 | 752 |   0 | GET    | /api/isu/[0-9a-zA-Z]+        | 0.012 | 0.768 | 255.103 | 0.034 | 0.068 | 0.116 | 0.252 |  0.050 |     0.000 | 135259.000 | 134660001.000 |  17880.760 |
+|  6968 |   0 |  6488 |   0 | 480 |   0 | GET    | /api/condition/[0-9a-zA-Z]+  | 0.008 | 0.452 | 206.527 | 0.030 | 0.060 | 0.092 | 0.232 |  0.040 |     0.000 |   6222.000 |  33270497.000 |   4774.756 |
+|   170 |   0 |    11 |   0 | 159 |   0 | GET    | /api/trend                   | 0.076 | 1.016 | 163.142 | 0.960 | 1.004 | 1.004 | 1.012 |  0.164 |     0.000 |   4528.000 |     33499.000 |    197.053 |
+|   841 |   0 |   772 |   0 |  69 |   0 | GET    | /api/isu                     | 0.000 | 0.748 |  70.767 | 0.084 | 0.252 | 0.280 | 0.480 |  0.108 |     3.000 |   3824.000 |   1791720.000 |   2130.464 |
+|   909 |   0 |   357 |   0 | 552 |   0 | POST   | /api/auth                    | 0.004 | 0.128 |   6.464 | 0.007 | 0.016 | 0.028 | 0.060 |  0.012 |     0.000 |     19.000 |      6348.000 |      6.983 |
+|    55 |   0 |    51 |   0 |   4 |   0 | POST   | /api/isu                     | 0.012 | 0.320 |   4.684 | 0.085 | 0.108 | 0.164 | 0.320 |  0.042 |    15.000 |    137.000 |      6271.000 |    114.018 |
+|   359 |   0 |   150 |   0 | 209 |   0 | GET    | /api/user/me                 | 0.000 | 0.088 |   1.724 | 0.005 | 0.016 | 0.020 | 0.048 |  0.010 |    21.000 |     37.000 |      9266.000 |     25.811 |
+|   213 |   0 |   142 |   0 |  71 |   0 | POST   | /api/signout                 | 0.000 | 0.120 |   1.508 | 0.007 | 0.016 | 0.024 | 0.048 |  0.013 |    21.000 |     21.000 |      1491.000 |      7.000 |
+|     1 |   0 |     1 |   0 |   0 |   0 | POST   | /initialize                  | 1.068 | 1.068 |   1.068 | 1.068 | 1.068 | 1.068 | 1.068 |  0.000 |    18.000 |     18.000 |        18.000 |     18.000 |
+|   276 |   0 |   173 | 103 |   0 |   0 | GET    | /assets/vendor.ee7444dd.js   | 0.000 | 0.016 |   0.756 | 0.003 | 0.004 | 0.008 | 0.012 |  0.003 |     0.000 | 743417.000 | 128611141.000 | 465982.395 |
+|   276 |   0 |   173 | 103 |   0 |   0 | GET    | /assets/index.23dac98b.js    | 0.000 | 0.012 |   0.524 | 0.002 | 0.004 | 0.008 | 0.012 |  0.003 |     0.000 |  26667.000 |   4613391.000 |  16715.185 |
+|   276 |   0 |   173 | 103 |   0 |   0 | GET    | /assets/favicon.d0f5f504.svg | 0.000 | 0.012 |   0.496 | 0.002 | 0.004 | 0.004 | 0.012 |  0.002 |     0.000 |    592.000 |    102416.000 |    371.072 |
+|   276 |   0 |   173 | 103 |   0 |   0 | GET    | /assets/index.144d8ca8.css   | 0.000 | 0.012 |   0.472 | 0.002 | 0.004 | 0.004 | 0.008 |  0.002 |     0.000 |  19066.000 |   3298418.000 |  11950.790 |
+|   394 |   0 |   323 |  71 |   0 |   0 | GET    | /                            | 0.000 | 0.012 |   0.336 | 0.001 | 0.004 | 0.004 | 0.008 |  0.002 |     0.000 |    528.000 |    170544.000 |    432.853 |
+|   276 |   0 |   173 | 103 |   0 |   0 | GET    | /assets/logo_white.svg       | 0.000 | 0.012 |   0.248 | 0.001 | 0.004 | 0.004 | 0.008 |  0.002 |     0.000 |   3285.000 |    568305.000 |   2059.076 |
+|   172 |   0 |   172 |   0 |   0 |   0 | GET    | /assets/logo_orange.svg      | 0.000 | 0.008 |   0.184 | 0.001 | 0.004 | 0.004 | 0.008 |  0.002 |  3288.000 |   3288.000 |    565536.000 |   3288.000 |
+|    30 |   0 |    18 |  12 |   0 |   0 | GET    | /isu/[0-9a-zA-Z]+            | 0.000 | 0.004 |   0.020 | 0.001 | 0.004 | 0.004 | 0.004 |  0.001 |     0.000 |    528.000 |      9504.000 |    316.800 |
+|     3 |   0 |     1 |   2 |   0 |   0 | GET    | /register                    | 0.000 | 0.000 |   0.000 | 0.000 | 0.000 | 0.000 | 0.000 |  0.000 |     0.000 |    528.000 |       528.000 |    176.000 |
++-------+-----+-------+-----+-----+-----+--------+------------------------------+-------+-------+---------+-------+-------+-------+-------+--------+-----------+------------+---------------+------------+
+:: SLOWQUERY(mysqldumpslow) LOG       ====>
+Count: 1  Time=0.00s (0s)  Lock=0.00s (0s)  Rows_sent=25.0 (25), Rows_examined=35.0 (35), Rows_affected=0.0 (0), root[root]@localhost
+  select concat('S',
+  TABLE_SCHEMA, 'S', TABLE_NAME, 'S') 
+  from information_schema.TABLES where TABLE_SCHEMA<>'S' and TABLE_SCHEMA<>'S' and ( ENGINE='S' or ENGINE='S' )
+
+Count: 1  Time=0.00s (0s)  Lock=0.00s (0s)  Rows_sent=1.0 (1), Rows_examined=1.0 (1), Rows_affected=0.0 (0), root[root]@localhost
+  show variables like 'S'
+
+Count: 1  Time=0.00s (0s)  Lock=0.00s (0s)  Rows_sent=1.0 (1), Rows_examined=2.0 (2), Rows_affected=0.0 (0), root[root]@localhost
+  SELECT count(*) FROM mysql.user WHERE user='S' and password='S' and plugin='S'
+
+Count: 1  Time=0.00s (0s)  Lock=0.00s (0s)  Rows_sent=0.0 (0), Rows_examined=0.0 (0), Rows_affected=0.0 (0), root[root]@localhost
+  SET SQL_LOG_BIN=N, WSREP_ON=OFF
+
+Count: 1  Time=0.00s (0s)  Lock=0.00s (0s)  Rows_sent=0.0 (0), Rows_examined=0.0 (0), Rows_affected=1.0 (1), root[root]@localhost
+  select count(*) into @discard from `mysql`.`columns_priv`
+
+Count: 1  Time=0.00s (0s)  Lock=0.00s (0s)  Rows_sent=0.0 (0), Rows_examined=0.0 (0), Rows_affected=1.0 (1), root[root]@localhost
+  select count(*) into @discard from `mysql`.`help_category`
+
+Count: 1  Time=0.00s (0s)  Lock=0.00s (0s)  Rows_sent=0.0 (0), Rows_examined=0.0 (0), Rows_affected=1.0 (1), root[root]@localhost
+  select count(*) into @discard from `mysql`.`time_zone_transition_type`
+
+Count: 1  Time=0.00s (0s)  Lock=0.00s (0s)  Rows_sent=0.0 (0), Rows_examined=0.0 (0), Rows_affected=1.0 (1), root[root]@localhost
+  select count(*) into @discard from `mysql`.`time_zone_transition`
+
+Count: 1  Time=0.00s (0s)  Lock=0.00s (0s)  Rows_sent=0.0 (0), Rows_examined=0.0 (0), Rows_affected=1.0 (1), root[root]@localhost
+  select count(*) into @discard from `mysql`.`roles_mapping`
+
+Count: 1  Time=0.00s (0s)  Lock=0.00s (0s)  Rows_sent=0.0 (0), Rows_examined=0.0 (0), Rows_affected=1.0 (1), root[root]@localhost
+  select count(*) into @discard from `mysql`.`host`
+
+Count: 1  Time=0.00s (0s)  Lock=0.00s (0s)  Rows_sent=0.0 (0), Rows_examined=0.0 (0), Rows_affected=1.0 (1), root[root]@localhost
+  select count(*) into @discard from `mysql`.`func`
+
+Count: 1  Time=0.00s (0s)  Lock=0.00s (0s)  Rows_sent=0.0 (0), Rows_examined=0.0 (0), Rows_affected=1.0 (1), root[root]@localhost
+  select count(*) into @discard from `mysql`.`time_zone`
+
+Count: 1  Time=0.00s (0s)  Lock=0.00s (0s)  Rows_sent=0.0 (0), Rows_examined=0.0 (0), Rows_affected=1.0 (1), root[root]@localhost
+  select count(*) into @discard from `mysql`.`procs_priv`
+
+Count: 1  Time=0.00s (0s)  Lock=0.00s (0s)  Rows_sent=0.0 (0), Rows_examined=0.0 (0), Rows_affected=1.0 (1), root[root]@localhost
+  select count(*) into @discard from `mysql`.`user`
+
+Count: 1  Time=0.00s (0s)  Lock=0.00s (0s)  Rows_sent=0.0 (0), Rows_examined=0.0 (0), Rows_affected=1.0 (1), root[root]@localhost
+  select count(*) into @discard from `mysql`.`event`
+
+Count: 1  Time=0.00s (0s)  Lock=0.00s (0s)  Rows_sent=0.0 (0), Rows_examined=0.0 (0), Rows_affected=1.0 (1), root[root]@localhost
+  select count(*) into @discard from `mysql`.`time_zone_name`
+
+Count: 1  Time=0.00s (0s)  Lock=0.00s (0s)  Rows_sent=0.0 (0), Rows_examined=0.0 (0), Rows_affected=1.0 (1), root[root]@localhost
+  select count(*) into @discard from `mysql`.`proxies_priv`
+
+Count: 1  Time=0.00s (0s)  Lock=0.00s (0s)  Rows_sent=0.0 (0), Rows_examined=0.0 (0), Rows_affected=1.0 (1), root[root]@localhost
+  select count(*) into @discard from `mysql`.`help_relation`
+
+Count: 1  Time=0.00s (0s)  Lock=0.00s (0s)  Rows_sent=0.0 (0), Rows_examined=0.0 (0), Rows_affected=1.0 (1), root[root]@localhost
+  select count(*) into @discard from `mysql`.`table_stats`
+
+Count: 1  Time=0.00s (0s)  Lock=0.00s (0s)  Rows_sent=0.0 (0), Rows_examined=0.0 (0), Rows_affected=1.0 (1), root[root]@localhost
+  select count(*) into @discard from `mysql`.`help_keyword`
+
+Count: 1  Time=0.00s (0s)  Lock=0.00s (0s)  Rows_sent=0.0 (0), Rows_examined=0.0 (0), Rows_affected=1.0 (1), root[root]@localhost
+  select count(*) into @discard from `mysql`.`index_stats`
+
+Count: 1  Time=0.00s (0s)  Lock=0.00s (0s)  Rows_sent=0.0 (0), Rows_examined=0.0 (0), Rows_affected=1.0 (1), root[root]@localhost
+  select count(*) into @discard from `mysql`.`column_stats`
+
+Count: 1  Time=0.00s (0s)  Lock=0.00s (0s)  Rows_sent=0.0 (0), Rows_examined=0.0 (0), Rows_affected=1.0 (1), root[root]@localhost
+  select count(*) into @discard from `mysql`.`help_topic`
+
+Count: 1  Time=0.00s (0s)  Lock=0.00s (0s)  Rows_sent=0.0 (0), Rows_examined=0.0 (0), Rows_affected=1.0 (1), root[root]@localhost
+  select count(*) into @discard from `mysql`.`db`
+
+Count: 1  Time=0.00s (0s)  Lock=0.00s (0s)  Rows_sent=0.0 (0), Rows_examined=0.0 (0), Rows_affected=1.0 (1), root[root]@localhost
+  select count(*) into @discard from `mysql`.`tables_priv`
+
+Count: 1  Time=0.00s (0s)  Lock=0.00s (0s)  Rows_sent=0.0 (0), Rows_examined=0.0 (0), Rows_affected=1.0 (1), root[root]@localhost
+  select count(*) into @discard from `mysql`.`proc`
+
+Count: 1  Time=0.00s (0s)  Lock=0.00s (0s)  Rows_sent=0.0 (0), Rows_examined=0.0 (0), Rows_affected=1.0 (1), root[root]@localhost
+  select count(*) into @discard from `mysql`.`servers`
+
+Count: 1  Time=0.00s (0s)  Lock=0.00s (0s)  Rows_sent=0.0 (0), Rows_examined=0.0 (0), Rows_affected=1.0 (1), root[root]@localhost
+  select count(*) into @discard from `mysql`.`time_zone_leap_second`
+
+Count: 1  Time=0.00s (0s)  Lock=0.00s (0s)  Rows_sent=0.0 (0), Rows_examined=0.0 (0), Rows_affected=1.0 (1), root[root]@localhost
+  select count(*) into @discard from `mysql`.`plugin`
+
+Count: 28  Time=0.00s (0s)  Lock=0.00s (0s)  Rows_sent=0.0 (0), Rows_examined=0.0 (0), Rows_affected=0.0 (0), root[root]@localhost
+  #
+
+Count: 28  Time=0.00s (0s)  Lock=0.00s (0s)  Rows_sent=0.0 (0), Rows_examined=0.0 (0), Rows_affected=0.0 (0), 0users@0hosts
+  administrator command: Quit
+
+:: SLOWQUERY(pt-query-digest) LOG       ====>
+
+# 250ms user time, 40ms system time, 30.22M rss, 36.64M vsz
+# Current date: Thu Jun 23 11:24:19 2022
+# Hostname: isucon11
+# Files: /var/log/mysql/mysql-slow.log
+# Overall: 57 total, 30 unique, 57 QPS, 0.01x concurrency ________________
+# Time range: 2022-06-23 10:26:22 to 10:26:23
+# Attribute          total     min     max     avg     95%  stddev  median
+# ============     ======= ======= ======= ======= ======= ======= =======
+# Exec time           11ms       0     3ms   185us   384us   458us    89us
+# Lock time            5ms       0   333us    79us   247us    95us       0
+# Rows sent             27       0      25    0.47       0    3.26       0
+# Rows examine          38       0      35    0.67       0    4.59       0
+# Rows affecte          25       0       1    0.44    0.99    0.49       0
+# Bytes sent         2.22k       0   1.63k   39.81   10.84  217.65   10.84
+# Query size         2.50k      27     270   44.82   65.89   32.42   29.47
+
+# Profile
+# Rank Query ID                            Response time Calls R/Call V/M 
+# ==== =================================== ============= ===== ====== ====
+#    1 0xA0B014EF6109CC5B6EFD41F196940589   0.0033 31.2%     1 0.0033  0.00 SELECT information_schema.TABLES
+#    2 0xE77769C62EF669AA7DD5F6760F2D2EBB   0.0012 11.4%     1 0.0012  0.00 SHOW VARIABLES
+#    3 0xAD2241013767B7FD2DB9FB7816AA5A1B   0.0007  6.5%     1 0.0007  0.00 SELECT mysql.user
+#    4 0xA9CAB8D84396F4219B867AD2DA7595AD   0.0004  3.8%     1 0.0004  0.00 SELECT mysql.time_zone_transition
+#    5 0x09F160DEEB00C188D7DC9303A82AE691   0.0004  3.5%     1 0.0004  0.00 SELECT mysql.time_zone_transition_type
+#    6 0x8FDF90C12B453C08149834361F66175B   0.0003  2.9%     1 0.0003  0.00 SELECT mysql.time_zone
+#    7 0xB59FADC050D4DAC961FEFEFBB9B41ECE   0.0003  2.6%     1 0.0003  0.00 SET
+#    8 0x15106AC6EBDC54C452A29C261C8031BB   0.0003  2.6%     1 0.0003  0.00 SELECT mysql.columns_priv
+#    9 0x3C7895E431BD9E14ABFB48421784C84F   0.0003  2.5%     1 0.0003  0.00 SELECT mysql.func
+#   10 0x3F56802DC9E0039FFAA61F14034B739D   0.0003  2.4%     1 0.0003  0.00 SELECT mysql.help_category
+#   11 0x883BDEF37DA2388DC56C839C6B2F4C44   0.0003  2.4%     1 0.0003  0.00 SELECT mysql.help_relation
+#   12 0x934CDDF65D56A94DD3A29FEF06FB99A5   0.0002  2.3%     1 0.0002  0.00 SELECT mysql.time_zone_name
+#   13 0x58E62C94D134834E54A2AFD79EE9D9DA   0.0002  2.3%     1 0.0002  0.00 SELECT mysql.column_stats
+#   14 0x4E5054DB925E80F59091EB4D237A20AC   0.0002  2.3%     1 0.0002  0.00 SELECT mysql.index_stats
+#   15 0x430C98932F75479B40FA5250DE9C0EE4   0.0002  2.2%     1 0.0002  0.00 SELECT mysql.help_topic
+#   16 0xCEC637FA6FCA55A41E3FF025002EC3E9   0.0002  2.1%     1 0.0002  0.00 SELECT mysql.help_keyword
+#   17 0xCB4B6BA217338255240BD39831FAE642   0.0002  2.1%     1 0.0002  0.00 SELECT mysql.table_stats
+#   18 0xB8CA39C07A84A6C75886C8E91DB96E0C   0.0002  1.9%     1 0.0002  0.00 SELECT mysql.proc
+#   19 0xA20EED88D40EDE9C36C91AE64071BF40   0.0002  1.8%     1 0.0002  0.00 SELECT mysql.plugin
+#   20 0xCF687630FB22BAB8B86E2178F4A42D77   0.0002  1.7%     1 0.0002  0.00 SELECT mysql.time_zone_leap_second
+# MISC 0xMISC                               0.0010  9.4%    37 0.0000   0.0 <10 ITEMS>
+
+# Query 1: 0 QPS, 0x concurrency, ID 0xA0B014EF6109CC5B6EFD41F196940589 at byte 1495
+# This item is included in the report because it matches --limit.
+# Scores: V/M = 0.00
+# Time range: all events occurred at 2022-06-23 10:26:22
+# Attribute    pct   total     min     max     avg     95%  stddev  median
+# ============ === ======= ======= ======= ======= ======= ======= =======
+# Count          1       1
+# Exec time     31     3ms     3ms     3ms     3ms     3ms       0     3ms
+# Lock time      5   229us   229us   229us   229us   229us       0   229us
+# Rows sent     92      25      25      25      25      25       0      25
+# Rows examine  92      35      35      35      35      35       0      35
+# Rows affecte   0       0       0       0       0       0       0       0
+# Bytes sent    73   1.63k   1.63k   1.63k   1.63k   1.63k       0   1.63k
+# Query size    10     270     270     270     270     270       0     270
+# String:
+# Databases    mysql
+# Hosts        localhost
+# Users        root
+# Query_time distribution
+#   1us
+#  10us
+# 100us
+#   1ms  ################################################################
+#  10ms
+# 100ms
+#    1s
+#  10s+
+# Tables
+#    SHOW TABLE STATUS FROM `information_schema` LIKE 'TABLES'\G
+#    SHOW CREATE TABLE `information_schema`.`TABLES`\G
+# EXPLAIN /*!50100 PARTITIONS*/
+select concat('select count(*) into @discard from `',
+                    TABLE_SCHEMA, '`.`', TABLE_NAME, '`') 
+      from information_schema.TABLES where TABLE_SCHEMA<>'INFORMATION_SCHEMA' and TABLE_SCHEMA<>'PERFORMANCE_SCHEMA' and ( ENGINE='MyISAM' or ENGINE='Aria' )\G
+
+# Query 2: 0 QPS, 0x concurrency, ID 0xE77769C62EF669AA7DD5F6760F2D2EBB at byte 461
+# This item is included in the report because it matches --limit.
+# Scores: V/M = 0.00
+# Time range: all events occurred at 2022-06-23 10:26:22
+# Attribute    pct   total     min     max     avg     95%  stddev  median
+# ============ === ======= ======= ======= ======= ======= ======= =======
+# Count          1       1
+# Exec time     11     1ms     1ms     1ms     1ms     1ms       0     1ms
+# Lock time      4   219us   219us   219us   219us   219us       0   219us
+# Rows sent      3       1       1       1       1       1       0       1
+# Rows examine   2       1       1       1       1       1       0       1
+# Rows affecte   0       0       0       0       0       0       0       0
+# Bytes sent    11     252     252     252     252     252       0     252
+# Query size     1      29      29      29      29      29       0      29
+# String:
+# Databases    mysql
+# Hosts        localhost
+# Users        root
+# Query_time distribution
+#   1us
+#  10us
+# 100us
+#   1ms  ################################################################
+#  10ms
+# 100ms
+#    1s
+#  10s+
+show variables like 'datadir'\G
+
+# Query 3: 0 QPS, 0x concurrency, ID 0xAD2241013767B7FD2DB9FB7816AA5A1B at byte 958
+# This item is included in the report because it matches --limit.
+# Scores: V/M = 0.00
+# Time range: all events occurred at 2022-06-23 10:26:22
+# Attribute    pct   total     min     max     avg     95%  stddev  median
+# ============ === ======= ======= ======= ======= ======= ======= =======
+# Count          1       1
+# Exec time      6   687us   687us   687us   687us   687us       0   687us
+# Lock time      5   269us   269us   269us   269us   269us       0   269us
+# Rows sent      3       1       1       1       1       1       0       1
+# Rows examine   5       2       2       2       2       2       0       2
+# Rows affecte   0       0       0       0       0       0       0       0
+# Bytes sent     2      63      63      63      63      63       0      63
+# Query size     3      79      79      79      79      79       0      79
+# String:
+# Databases    mysql
+# Hosts        localhost
+# Users        root
+# Query_time distribution
+#   1us
+#  10us
+# 100us  ################################################################
+#   1ms
+#  10ms
+# 100ms
+#    1s
+#  10s+
+# Tables
+#    SHOW TABLE STATUS FROM `mysql` LIKE 'user'\G
+#    SHOW CREATE TABLE `mysql`.`user`\G
+# EXPLAIN /*!50100 PARTITIONS*/
+SELECT count(*) FROM mysql.user WHERE user='root' and password='' and plugin=''\G
+
+# Query 4: 0 QPS, 0x concurrency, ID 0xA9CAB8D84396F4219B867AD2DA7595AD at byte 7919
+# This item is included in the report because it matches --limit.
+# Scores: V/M = 0.00
+# Time range: all events occurred at 2022-06-23 10:26:23
+# Attribute    pct   total     min     max     avg     95%  stddev  median
+# ============ === ======= ======= ======= ======= ======= ======= =======
+# Count          1       1
+# Exec time      3   401us   401us   401us   401us   401us       0   401us
+# Lock time      7   333us   333us   333us   333us   333us       0   333us
+# Rows sent      0       0       0       0       0       0       0       0
+# Rows examine   0       0       0       0       0       0       0       0
+# Rows affecte   4       1       1       1       1       1       0       1
+# Bytes sent     0      11      11      11      11      11       0      11
+# Query size     2      65      65      65      65      65       0      65
+# String:
+# Databases    mysql
+# Hosts        localhost
+# Users        root
+# Query_time distribution
+#   1us
+#  10us
+# 100us  ################################################################
+#   1ms
+#  10ms
+# 100ms
+#    1s
+#  10s+
+# Tables
+#    SHOW TABLE STATUS FROM `mysql` LIKE 'time_zone_transition'\G
+#    SHOW CREATE TABLE `mysql`.`time_zone_transition`\G
+# EXPLAIN /*!50100 PARTITIONS*/
+select count(*) into @discard from `mysql`.`time_zone_transition`\G
+
+# Query 5: 0 QPS, 0x concurrency, ID 0x09F160DEEB00C188D7DC9303A82AE691 at byte 2229
+# This item is included in the report because it matches --limit.
+# Scores: V/M = 0.00
+# Time range: all events occurred at 2022-06-23 10:26:22
+# Attribute    pct   total     min     max     avg     95%  stddev  median
+# ============ === ======= ======= ======= ======= ======= ======= =======
+# Count          1       1
+# Exec time      3   374us   374us   374us   374us   374us       0   374us
+# Lock time      6   293us   293us   293us   293us   293us       0   293us
+# Rows sent      0       0       0       0       0       0       0       0
+# Rows examine   0       0       0       0       0       0       0       0
+# Rows affecte   4       1       1       1       1       1       0       1
+# Bytes sent     0      11      11      11      11      11       0      11
+# Query size     2      70      70      70      70      70       0      70
+# String:
+# Databases    mysql
+# Hosts        localhost
+# Users        root
+# Query_time distribution
+#   1us
+#  10us
+# 100us  ################################################################
+#   1ms
+#  10ms
+# 100ms
+#    1s
+#  10s+
+# Tables
+#    SHOW TABLE STATUS FROM `mysql` LIKE 'time_zone_transition_type'\G
+#    SHOW CREATE TABLE `mysql`.`time_zone_transition_type`\G
+# EXPLAIN /*!50100 PARTITIONS*/
+select count(*) into @discard from `mysql`.`time_zone_transition_type`\G
+
+# Query 6: 0 QPS, 0x concurrency, ID 0x8FDF90C12B453C08149834361F66175B at byte 11019
+# This item is included in the report because it matches --limit.
+# Scores: V/M = 0.00
+# Time range: all events occurred at 2022-06-23 10:26:23
+# Attribute    pct   total     min     max     avg     95%  stddev  median
+# ============ === ======= ======= ======= ======= ======= ======= =======
+# Count          1       1
+# Exec time      2   307us   307us   307us   307us   307us       0   307us
+# Lock time      5   259us   259us   259us   259us   259us       0   259us
+# Rows sent      0       0       0       0       0       0       0       0
+# Rows examine   0       0       0       0       0       0       0       0
+# Rows affecte   4       1       1       1       1       1       0       1
+# Bytes sent     0      11      11      11      11      11       0      11
+# Query size     2      54      54      54      54      54       0      54
+# String:
+# Databases    mysql
+# Hosts        localhost
+# Users        root
+# Query_time distribution
+#   1us
+#  10us
+# 100us  ################################################################
+#   1ms
+#  10ms
+# 100ms
+#    1s
+#  10s+
+# Tables
+#    SHOW TABLE STATUS FROM `mysql` LIKE 'time_zone'\G
+#    SHOW CREATE TABLE `mysql`.`time_zone`\G
+# EXPLAIN /*!50100 PARTITIONS*/
+select count(*) into @discard from `mysql`.`time_zone`\G
+
+# Query 7: 0 QPS, 0x concurrency, ID 0xB59FADC050D4DAC961FEFEFBB9B41ECE at byte 0
+# This item is included in the report because it matches --limit.
+# Scores: V/M = 0.00
+# Time range: all events occurred at 2022-06-23 10:26:22
+# Attribute    pct   total     min     max     avg     95%  stddev  median
+# ============ === ======= ======= ======= ======= ======= ======= =======
+# Count          1       1
+# Exec time      2   276us   276us   276us   276us   276us       0   276us
+# Lock time      0       0       0       0       0       0       0       0
+# Rows sent      0       0       0       0       0       0       0       0
+# Rows examine   0       0       0       0       0       0       0       0
+# Rows affecte   0       0       0       0       0       0       0       0
+# Bytes sent     0      11      11      11      11      11       0      11
+# Query size     1      31      31      31      31      31       0      31
+# String:
+# Databases    mysql
+# Hosts        localhost
+# Users        root
+# Query_time distribution
+#   1us
+#  10us
+# 100us  ################################################################
+#   1ms
+#  10ms
+# 100ms
+#    1s
+#  10s+
+SET SQL_LOG_BIN=0, WSREP_ON=OFF\G
+
+# Query 8: 0 QPS, 0x concurrency, ID 0x15106AC6EBDC54C452A29C261C8031BB at byte 2759
+# This item is included in the report because it matches --limit.
+# Scores: V/M = 0.00
+# Time range: all events occurred at 2022-06-23 10:26:23
+# Attribute    pct   total     min     max     avg     95%  stddev  median
+# ============ === ======= ======= ======= ======= ======= ======= =======
+# Count          1       1
+# Exec time      2   273us   273us   273us   273us   273us       0   273us
+# Lock time      1    86us    86us    86us    86us    86us       0    86us
+# Rows sent      0       0       0       0       0       0       0       0
+# Rows examine   0       0       0       0       0       0       0       0
+# Rows affecte   4       1       1       1       1       1       0       1
+# Bytes sent     0      11      11      11      11      11       0      11
+# Query size     2      57      57      57      57      57       0      57
+# String:
+# Databases    mysql
+# Hosts        localhost
+# Users        root
+# Query_time distribution
+#   1us
+#  10us
+# 100us  ################################################################
+#   1ms
+#  10ms
+# 100ms
+#    1s
+#  10s+
+# Tables
+#    SHOW TABLE STATUS FROM `mysql` LIKE 'columns_priv'\G
+#    SHOW CREATE TABLE `mysql`.`columns_priv`\G
+# EXPLAIN /*!50100 PARTITIONS*/
+select count(*) into @discard from `mysql`.`columns_priv`\G
+
+# Query 9: 0 QPS, 0x concurrency, ID 0x3C7895E431BD9E14ABFB48421784C84F at byte 3300
+# This item is included in the report because it matches --limit.
+# Scores: V/M = 0.00
+# Time range: all events occurred at 2022-06-23 10:26:23
+# Attribute    pct   total     min     max     avg     95%  stddev  median
+# ============ === ======= ======= ======= ======= ======= ======= =======
+# Count          1       1
+# Exec time      2   268us   268us   268us   268us   268us       0   268us
+# Lock time      4   213us   213us   213us   213us   213us       0   213us
+# Rows sent      0       0       0       0       0       0       0       0
+# Rows examine   0       0       0       0       0       0       0       0
+# Rows affecte   4       1       1       1       1       1       0       1
+# Bytes sent     0      11      11      11      11      11       0      11
+# Query size     1      49      49      49      49      49       0      49
+# String:
+# Databases    mysql
+# Hosts        localhost
+# Users        root
+# Query_time distribution
+#   1us
+#  10us
+# 100us  ################################################################
+#   1ms
+#  10ms
+# 100ms
+#    1s
+#  10s+
+# Tables
+#    SHOW TABLE STATUS FROM `mysql` LIKE 'func'\G
+#    SHOW CREATE TABLE `mysql`.`func`\G
+# EXPLAIN /*!50100 PARTITIONS*/
+select count(*) into @discard from `mysql`.`func`\G
+
+# Query 10: 0 QPS, 0x concurrency, ID 0x3F56802DC9E0039FFAA61F14034B739D at byte 5352
+# This item is included in the report because it matches --limit.
+# Scores: V/M = 0.00
+# Time range: all events occurred at 2022-06-23 10:26:23
+# Attribute    pct   total     min     max     avg     95%  stddev  median
+# ============ === ======= ======= ======= ======= ======= ======= =======
+# Count          1       1
+# Exec time      2   252us   252us   252us   252us   252us       0   252us
+# Lock time      3   168us   168us   168us   168us   168us       0   168us
+# Rows sent      0       0       0       0       0       0       0       0
+# Rows examine   0       0       0       0       0       0       0       0
+# Rows affecte   4       1       1       1       1       1       0       1
+# Bytes sent     0      11      11      11      11      11       0      11
+# Query size     2      58      58      58      58      58       0      58
+# String:
+# Databases    mysql
+# Hosts        localhost
+# Users        root
+# Query_time distribution
+#   1us
+#  10us
+# 100us  ################################################################
+#   1ms
+#  10ms
+# 100ms
+#    1s
+#  10s+
+# Tables
+#    SHOW TABLE STATUS FROM `mysql` LIKE 'help_category'\G
+#    SHOW CREATE TABLE `mysql`.`help_category`\G
+# EXPLAIN /*!50100 PARTITIONS*/
+select count(*) into @discard from `mysql`.`help_category`\G
+
+# Query 11: 0 QPS, 0x concurrency, ID 0x883BDEF37DA2388DC56C839C6B2F4C44 at byte 8961
+# This item is included in the report because it matches --limit.
+# Scores: V/M = 0.00
+# Time range: all events occurred at 2022-06-23 10:26:23
+# Attribute    pct   total     min     max     avg     95%  stddev  median
+# ============ === ======= ======= ======= ======= ======= ======= =======
+# Count          1       1
+# Exec time      2   251us   251us   251us   251us   251us       0   251us
+# Lock time      4   208us   208us   208us   208us   208us       0   208us
+# Rows sent      0       0       0       0       0       0       0       0
+# Rows examine   0       0       0       0       0       0       0       0
+# Rows affecte   4       1       1       1       1       1       0       1
+# Bytes sent     0      11      11      11      11      11       0      11
+# Query size     2      58      58      58      58      58       0      58
+# String:
+# Databases    mysql
+# Hosts        localhost
+# Users        root
+# Query_time distribution
+#   1us
+#  10us
+# 100us  ################################################################
+#   1ms
+#  10ms
+# 100ms
+#    1s
+#  10s+
+# Tables
+#    SHOW TABLE STATUS FROM `mysql` LIKE 'help_relation'\G
+#    SHOW CREATE TABLE `mysql`.`help_relation`\G
+# EXPLAIN /*!50100 PARTITIONS*/
+select count(*) into @discard from `mysql`.`help_relation`\G
+
+# Query 12: 0 QPS, 0x concurrency, ID 0x934CDDF65D56A94DD3A29FEF06FB99A5 at byte 6891
+# This item is included in the report because it matches --limit.
+# Scores: V/M = 0.00
+# Time range: all events occurred at 2022-06-23 10:26:23
+# Attribute    pct   total     min     max     avg     95%  stddev  median
+# ============ === ======= ======= ======= ======= ======= ======= =======
+# Count          1       1
+# Exec time      2   247us   247us   247us   247us   247us       0   247us
+# Lock time      4   202us   202us   202us   202us   202us       0   202us
+# Rows sent      0       0       0       0       0       0       0       0
+# Rows examine   0       0       0       0       0       0       0       0
+# Rows affecte   4       1       1       1       1       1       0       1
+# Bytes sent     0      11      11      11      11      11       0      11
+# Query size     2      59      59      59      59      59       0      59
+# String:
+# Databases    mysql
+# Hosts        localhost
+# Users        root
+# Query_time distribution
+#   1us
+#  10us
+# 100us  ################################################################
+#   1ms
+#  10ms
+# 100ms
+#    1s
+#  10s+
+# Tables
+#    SHOW TABLE STATUS FROM `mysql` LIKE 'time_zone_name'\G
+#    SHOW CREATE TABLE `mysql`.`time_zone_name`\G
+# EXPLAIN /*!50100 PARTITIONS*/
+select count(*) into @discard from `mysql`.`time_zone_name`\G
+
+# Query 13: 0 QPS, 0x concurrency, ID 0x58E62C94D134834E54A2AFD79EE9D9DA at byte 4325
+# This item is included in the report because it matches --limit.
+# Scores: V/M = 0.00
+# Time range: all events occurred at 2022-06-23 10:26:23
+# Attribute    pct   total     min     max     avg     95%  stddev  median
+# ============ === ======= ======= ======= ======= ======= ======= =======
+# Count          1       1
+# Exec time      2   246us   246us   246us   246us   246us       0   246us
+# Lock time      4   208us   208us   208us   208us   208us       0   208us
+# Rows sent      0       0       0       0       0       0       0       0
+# Rows examine   0       0       0       0       0       0       0       0
+# Rows affecte   4       1       1       1       1       1       0       1
+# Bytes sent     0      11      11      11      11      11       0      11
+# Query size     2      57      57      57      57      57       0      57
+# String:
+# Databases    mysql
+# Hosts        localhost
+# Users        root
+# Query_time distribution
+#   1us
+#  10us
+# 100us  ################################################################
+#   1ms
+#  10ms
+# 100ms
+#    1s
+#  10s+
+# Tables
+#    SHOW TABLE STATUS FROM `mysql` LIKE 'column_stats'\G
+#    SHOW CREATE TABLE `mysql`.`column_stats`\G
+# EXPLAIN /*!50100 PARTITIONS*/
+select count(*) into @discard from `mysql`.`column_stats`\G
+
+# Query 14: 0 QPS, 0x concurrency, ID 0x4E5054DB925E80F59091EB4D237A20AC at byte 10503
+# This item is included in the report because it matches --limit.
+# Scores: V/M = 0.00
+# Time range: all events occurred at 2022-06-23 10:26:23
+# Attribute    pct   total     min     max     avg     95%  stddev  median
+# ============ === ======= ======= ======= ======= ======= ======= =======
+# Count          1       1
+# Exec time      2   241us   241us   241us   241us   241us       0   241us
+# Lock time      4   202us   202us   202us   202us   202us       0   202us
+# Rows sent      0       0       0       0       0       0       0       0
+# Rows examine   0       0       0       0       0       0       0       0
+# Rows affecte   4       1       1       1       1       1       0       1
+# Bytes sent     0      11      11      11      11      11       0      11
+# Query size     2      56      56      56      56      56       0      56
+# String:
+# Databases    mysql
+# Hosts        localhost
+# Users        root
+# Query_time distribution
+#   1us
+#  10us
+# 100us  ################################################################
+#   1ms
+#  10ms
+# 100ms
+#    1s
+#  10s+
+# Tables
+#    SHOW TABLE STATUS FROM `mysql` LIKE 'index_stats'\G
+#    SHOW CREATE TABLE `mysql`.`index_stats`\G
+# EXPLAIN /*!50100 PARTITIONS*/
+select count(*) into @discard from `mysql`.`index_stats`\G
+
+# Query 15: 0 QPS, 0x concurrency, ID 0x430C98932F75479B40FA5250DE9C0EE4 at byte 14628
+# This item is included in the report because it matches --limit.
+# Scores: V/M = 0.00
+# Time range: all events occurred at 2022-06-23 10:26:23
+# Attribute    pct   total     min     max     avg     95%  stddev  median
+# ============ === ======= ======= ======= ======= ======= ======= =======
+# Count          1       1
+# Exec time      2   234us   234us   234us   234us   234us       0   234us
+# Lock time      4   198us   198us   198us   198us   198us       0   198us
+# Rows sent      0       0       0       0       0       0       0       0
+# Rows examine   0       0       0       0       0       0       0       0
+# Rows affecte   4       1       1       1       1       1       0       1
+# Bytes sent     0      11      11      11      11      11       0      11
+# Query size     2      55      55      55      55      55       0      55
+# String:
+# Databases    mysql
+# Hosts        localhost
+# Users        root
+# Query_time distribution
+#   1us
+#  10us
+# 100us  ################################################################
+#   1ms
+#  10ms
+# 100ms
+#    1s
+#  10s+
+# Tables
+#    SHOW TABLE STATUS FROM `mysql` LIKE 'help_topic'\G
+#    SHOW CREATE TABLE `mysql`.`help_topic`\G
+# EXPLAIN /*!50100 PARTITIONS*/
+select count(*) into @discard from `mysql`.`help_topic`\G
+
+# Query 16: 0 QPS, 0x concurrency, ID 0xCEC637FA6FCA55A41E3FF025002EC3E9 at byte 8444
+# This item is included in the report because it matches --limit.
+# Scores: V/M = 0.00
+# Time range: all events occurred at 2022-06-23 10:26:23
+# Attribute    pct   total     min     max     avg     95%  stddev  median
+# ============ === ======= ======= ======= ======= ======= ======= =======
+# Count          1       1
+# Exec time      2   223us   223us   223us   223us   223us       0   223us
+# Lock time      4   183us   183us   183us   183us   183us       0   183us
+# Rows sent      0       0       0       0       0       0       0       0
+# Rows examine   0       0       0       0       0       0       0       0
+# Rows affecte   4       1       1       1       1       1       0       1
+# Bytes sent     0      11      11      11      11      11       0      11
+# Query size     2      57      57      57      57      57       0      57
+# String:
+# Databases    mysql
+# Hosts        localhost
+# Users        root
+# Query_time distribution
+#   1us
+#  10us
+# 100us  ################################################################
+#   1ms
+#  10ms
+# 100ms
+#    1s
+#  10s+
+# Tables
+#    SHOW TABLE STATUS FROM `mysql` LIKE 'help_keyword'\G
+#    SHOW CREATE TABLE `mysql`.`help_keyword`\G
+# EXPLAIN /*!50100 PARTITIONS*/
+select count(*) into @discard from `mysql`.`help_keyword`\G
+
+# Query 17: 0 QPS, 0x concurrency, ID 0xCB4B6BA217338255240BD39831FAE642 at byte 3809
+# This item is included in the report because it matches --limit.
+# Scores: V/M = 0.00
+# Time range: all events occurred at 2022-06-23 10:26:23
+# Attribute    pct   total     min     max     avg     95%  stddev  median
+# ============ === ======= ======= ======= ======= ======= ======= =======
+# Count          1       1
+# Exec time      2   223us   223us   223us   223us   223us       0   223us
+# Lock time      4   182us   182us   182us   182us   182us       0   182us
+# Rows sent      0       0       0       0       0       0       0       0
+# Rows examine   0       0       0       0       0       0       0       0
+# Rows affecte   4       1       1       1       1       1       0       1
+# Bytes sent     0      11      11      11      11      11       0      11
+# Query size     2      56      56      56      56      56       0      56
+# String:
+# Databases    mysql
+# Hosts        localhost
+# Users        root
+# Query_time distribution
+#   1us
+#  10us
+# 100us  ################################################################
+#   1ms
+#  10ms
+# 100ms
+#    1s
+#  10s+
+# Tables
+#    SHOW TABLE STATUS FROM `mysql` LIKE 'table_stats'\G
+#    SHOW CREATE TABLE `mysql`.`table_stats`\G
+# EXPLAIN /*!50100 PARTITIONS*/
+select count(*) into @discard from `mysql`.`table_stats`\G
+
+# Query 18: 0 QPS, 0x concurrency, ID 0xB8CA39C07A84A6C75886C8E91DB96E0C at byte 5870
+# This item is included in the report because it matches --limit.
+# Scores: V/M = 0.00
+# Time range: all events occurred at 2022-06-23 10:26:23
+# Attribute    pct   total     min     max     avg     95%  stddev  median
+# ============ === ======= ======= ======= ======= ======= ======= =======
+# Count          1       1
+# Exec time      1   206us   206us   206us   206us   206us       0   206us
+# Lock time      3   171us   171us   171us   171us   171us       0   171us
+# Rows sent      0       0       0       0       0       0       0       0
+# Rows examine   0       0       0       0       0       0       0       0
+# Rows affecte   4       1       1       1       1       1       0       1
+# Bytes sent     0      11      11      11      11      11       0      11
+# Query size     1      49      49      49      49      49       0      49
+# String:
+# Databases    mysql
+# Hosts        localhost
+# Users        root
+# Query_time distribution
+#   1us
+#  10us
+# 100us  ################################################################
+#   1ms
+#  10ms
+# 100ms
+#    1s
+#  10s+
+# Tables
+#    SHOW TABLE STATUS FROM `mysql` LIKE 'proc'\G
+#    SHOW CREATE TABLE `mysql`.`proc`\G
+# EXPLAIN /*!50100 PARTITIONS*/
+select count(*) into @discard from `mysql`.`proc`\G
+
+# Query 19: 0 QPS, 0x concurrency, ID 0xA20EED88D40EDE9C36C91AE64071BF40 at byte 12042
+# This item is included in the report because it matches --limit.
+# Scores: V/M = 0.00
+# Time range: all events occurred at 2022-06-23 10:26:23
+# Attribute    pct   total     min     max     avg     95%  stddev  median
+# ============ === ======= ======= ======= ======= ======= ======= =======
+# Count          1       1
+# Exec time      1   187us   187us   187us   187us   187us       0   187us
+# Lock time      3   159us   159us   159us   159us   159us       0   159us
+# Rows sent      0       0       0       0       0       0       0       0
+# Rows examine   0       0       0       0       0       0       0       0
+# Rows affecte   4       1       1       1       1       1       0       1
+# Bytes sent     0      11      11      11      11      11       0      11
+# Query size     1      51      51      51      51      51       0      51
+# String:
+# Databases    mysql
+# Hosts        localhost
+# Users        root
+# Query_time distribution
+#   1us
+#  10us
+# 100us  ################################################################
+#   1ms
+#  10ms
+# 100ms
+#    1s
+#  10s+
+# Tables
+#    SHOW TABLE STATUS FROM `mysql` LIKE 'plugin'\G
+#    SHOW CREATE TABLE `mysql`.`plugin`\G
+# EXPLAIN /*!50100 PARTITIONS*/
+select count(*) into @discard from `mysql`.`plugin`\G
+
+# Query 20: 0 QPS, 0x concurrency, ID 0xCF687630FB22BAB8B86E2178F4A42D77 at byte 12553
+# This item is included in the report because it matches --limit.
+# Scores: V/M = 0.00
+# Time range: all events occurred at 2022-06-23 10:26:23
+# Attribute    pct   total     min     max     avg     95%  stddev  median
+# ============ === ======= ======= ======= ======= ======= ======= =======
+# Count          1       1
+# Exec time      1   182us   182us   182us   182us   182us       0   182us
+# Lock time      3   154us   154us   154us   154us   154us       0   154us
+# Rows sent      0       0       0       0       0       0       0       0
+# Rows examine   0       0       0       0       0       0       0       0
+# Rows affecte   4       1       1       1       1       1       0       1
+# Bytes sent     0      11      11      11      11      11       0      11
+# Query size     2      66      66      66      66      66       0      66
+# String:
+# Databases    mysql
+# Hosts        localhost
+# Users        root
+# Query_time distribution
+#   1us
+#  10us
+# 100us  ################################################################
+#   1ms
+#  10ms
+# 100ms
+#    1s
+#  10s+
+# Tables
+#    SHOW TABLE STATUS FROM `mysql` LIKE 'time_zone_leap_second'\G
+#    SHOW CREATE TABLE `mysql`.`time_zone_leap_second`\G
+# EXPLAIN /*!50100 PARTITIONS*/
+select count(*) into @discard from `mysql`.`time_zone_leap_second`\G
