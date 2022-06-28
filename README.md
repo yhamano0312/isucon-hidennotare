@@ -51,41 +51,61 @@ git config --global user.email "yusuke.hamano@mixi.co.jp"
 git config --global user.name "Yusuke Hamano"
 git add --all
 git commit -m "first commit"
-# sshのURLになってること確認！
+# sshのURLになってること確認!!!!!!!!!!!!
 git remote add origin git@github.com:yhamano0312/isucon12.git
 git push origin master
 ```
 
-5. tool_setup.shの各種設定を変更して実行する
+5. newrelicインストール
+- 以下のURLから出力されるワンライナーを叩く
+  - https://one.newrelic.com/launcher/nr1-core.explorer?pane=eyJuZXJkbGV0SWQiOiJucjEtY29yZS5saXN0aW5nIn0=&cards[0]=eyJuZXJkbGV0SWQiOiJucjEtaW5zdGFsbC1uZXdyZWxpYy5ucjEtaW5zdGFsbC1uZXdyZWxpYyIsImFjdGl2ZUNvbXBvbmVudCI6IlZUU09FbnZpcm9ubWVudCIsInBhdGgiOiJndWlkZWQifQ==
 
-6. nginx,mysqlのログ出力を有効化する
-## nginxアクセスログ設定
+- /etc/newrelic-infra.ymlにenable_process_metrics: trueを設定
+
+- /etc/newrelic-infra/logging.d にfile.ymlを以下の内容で作成
+
+```
+logs:
+  - name: syslog
+    file: /var/log/syslog
+  - name: mysql-error-log
+    file: /var/log/mysql/error.log
+```
+
+- sudo systemctl restart newrelic-infra
+- systemctl status newrelic-infra.service でサービス起動しているか確認
+
+1. tool_setup.shの各種設定を変更して実行する
+
+2. nginx,mysqlのログ出力を有効化する
+
+### nginxアクセスログ設定
 既存設定を踏襲してlog_formatを以下にする
 ```
 # /etc/nginx/nginx.conf
-log_format json escape=json '{'
-'"time":"$time_iso8601",'
-'"host":"$remote_addr",'
-'"port":"$remote_port",'
-'"method":"$request_method",'
-'"uri":"$request_uri",'
-'"status":"$status",'
-'"body_bytes":"$body_bytes_sent",'
-'"referer":"$http_referer",'
-'"ua":"$http_user_agent",'
-'"request_time":"$request_time",'
-'"response_time":"$upstream_response_time"'
-'}';
+    log_format json escape=json '{'
+    '"time":"$time_iso8601",'
+    '"host":"$remote_addr",'
+    '"port":"$remote_port",'
+    '"method":"$request_method",'
+    '"uri":"$request_uri",'
+    '"status":"$status",'
+    '"body_bytes":"$body_bytes_sent",'
+    '"referer":"$http_referer",'
+    '"ua":"$http_user_agent",'
+    '"request_time":"$request_time",'
+    '"response_time":"$upstream_response_time"'
+    '}';
 
-access_log  /var/log/nginx/access.log  json;
+    access_log  /var/log/nginx/access.log  json;
 
 ```
 設定したら再起動する
 sudo systemctl restart nginx
 
-## mysqlのスロークエリログ設定
+### mysqlのスロークエリログ設定
 ```
-# /etc/mysql/my.cnf
+# /etc/mysql/conf.d/my.cnf
 [mysqld]
 slow_query_log=1
 slow_query_log_file=/var/log/mysql/mysql-slow.log
@@ -94,7 +114,7 @@ long_query_time=0
 設定したら再起動する
 sudo systemctl restart mysql
 
-## 各種設定ファイルをgit管理にする
+### 各種設定ファイルをgit管理にする
 git管理ディレクトリに設定ファイルをcpして管理する。ディレクトリ名は`middle-setting`にしておく
 ```
 git add --all
@@ -102,9 +122,9 @@ git commit -m "add middleware conf"
 git push origin master
 ```
 
-1. deploy.sh,restart.sh,analyze.shの各種設定を変更して動作することを確認する
+8. deploy.sh,restart.sh,analyze.shの各種設定を変更して動作することを確認する
 
-2. ベンチマークを実行する 
+9. ベンチマークを実行する 
 
 
 ## pprof導入
@@ -117,7 +137,7 @@ tool_setup.shでライブラリ等は導入しているので
 - 間違いとかでgit rebaseでコミットをまとめたりするとpull時にconflictしてめんどいので、rebaseで綺麗にしようとしない
 - スキーマファイルがあるので見て把握すること！
 - 修正いれたら空コミットでベンチ結果を保存しておくと良いぞ。issueにも分析結果を貼っておこう
-  - `git commit --allow-empty -F- << EOM`の後に複数行のベンチ結果を貼り付けて最終行にEOMを入れる
+  - `{"pass":true,"score":1108,"messages":[{"text":"GET /api/estate/:id: リクエストに失敗しました (タイムアウトしました)","count":8},{"text":"POST /api/estate/nazotte: リクエストに失敗しました (タイムアウトしました)","count":20}],"reason":"OK","language":"go"}`の後に複数行のベンチ結果を貼り付けて最終行にEOMを入れる
 - ミドルウェアの設定ファイルもgit管理のリポジトリに新しくディレクトリを切って保存しておくと良さそう
   - nginx
   - mysql
@@ -152,3 +172,5 @@ tool_setup.shでライブラリ等は導入しているので
   - 分散させるのは競技の後半にして、indexとかの修正を先にやる
   - 場合によってはDBサーバを分割させる
   - 分割させたら使ってないサービスの常時起動は切っておく
+- ISUCONのあれこれの内容ができているか確認する
+  - https://zenn.dev/daisuzz/scraps/87498988adc162

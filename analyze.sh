@@ -5,7 +5,7 @@ NGINX_TARGET_SERVER="isu1"
 DB_TARGET_SERVER="isu1"
 
 # !!!!!!!!!ディレクトリ名修正!!!!!!!!!
-OUTPUT_FILE="./analyze_output/isucon11/analyze.`date \"+%Y%m%d_%H%M%S\"`"
+OUTPUT_FILE="./analyze_output/isucon10/analyze.`date \"+%Y%m%d_%H%M%S\"`"
 
 # alp で解析
 echo

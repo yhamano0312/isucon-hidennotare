@@ -1,35 +1,12 @@
 #!/bin/bash
 
-# 手動でやるやつらなので各サーバにsshして手動実行する
-## newRelic
-#### あまり使わなそうなので入れなくても良さそう
-### infrastracture agent(シェル経由で実行すると上手く入らないので)
-
-## integrationは何も入れない
-## `https://one.newrelic.com/marketplace?state=8f7c77a8-30cd-8fdc-a321-6bc59d796d28`に出力されるURLで実行する
-## NEW_RELIC_API_KEYはUser Typeを指定する
-# curl -Ls https://download.newrelic.com/install/newrelic-cli/scripts/install.sh | bash && sudo NEW_RELIC_API_KEY=xxxxxxxxxxx NEW_RELIC_ACCOUNT_ID=xxxxxxx /usr/local/bin/newrelic install
-
-# /etc/newrelic-infra.ymlにenable_process_metrics: trueを設定
-
-# /etc/newrelic-infra/logging.d にfile.ymlを以下の内容で作成
-```
-logs:
-  - name: syslog
-    file: /var/log/syslog
-  - name: mysql-error-log
-    file: /var/log/mysql/error.log
-```
-
-# sudo systemctl restart newrelic-infra
-# systemctl status newrelic-infra.service でサービス起動しているか確認
-
 # !!!!!!!!!要変更!!!!!!!!!!!!
 ISU_GO_PATH=/home/isucon/local/go/bin/go # goバイナリのパス
-REPO_PATH=/home/isucon/webapp # リポジトリを管理するパス
+REPO_PATH=/home/isucon/isuumo/webapp # リポジトリを管理するパス
+REPO_NAME=isucon10 # リポジトリ名
 
 # !!!!!!!!!!.ssh/configに設定したhost名を羅列すること!!!!!!!!!!!!!
-for srv in "isu2"
+for srv in "isu1"
 do
     echo 'starting tool setup for '${srv}
 
@@ -41,8 +18,7 @@ do
     ssh ${srv} "git -C ${REPO_PATH} init"
     CHECK_REMOTE=`ssh ${srv} "git -C ${REPO_PATH} remote | wc -l"`
     if [ ${CHECK_REMOTE} -eq 0 ]; then
-    # !!!!!!!!!!リポジトリ名を変更!!!!!!!!!!!!!!!
-        ssh ${srv} "git -C ${REPO_PATH} remote add origin git@github.com:yhamano0312/isucon11.git && git -C ${REPO_PATH} add *.gitignore && git -C ${REPO_PATH} commit -m \"add gitignore\" && git -C ${REPO_PATH} clean -df . && git -C ${REPO_PATH} pull origin master --allow-unrelated-histories --no-edit";
+        ssh ${srv} "git -C ${REPO_PATH} remote add origin git@github.com:yhamano0312/${REPO_NAME}.git && git -C ${REPO_PATH} add *.gitignore && git -C ${REPO_PATH} commit -m \"add gitignore\" && git -C ${REPO_PATH} clean -df . && git -C ${REPO_PATH} pull origin master --allow-unrelated-histories --no-edit";
     else
         echo "skip git remote setting"
     fi
