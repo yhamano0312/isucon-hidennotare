@@ -6,7 +6,7 @@ REPO_PATH=/home/isucon/isuumo/webapp # リポジトリを管理するパス
 REPO_NAME=isucon10 # リポジトリ名
 
 # !!!!!!!!!!.ssh/configに設定したhost名を羅列すること!!!!!!!!!!!!!
-for srv in "isu1"
+for srv in "isu2" "isu3"
 do
     echo 'starting tool setup for '${srv}
 
