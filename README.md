@@ -79,7 +79,7 @@ logs:
     file: /var/log/syslog
   - name: mysql-error-log
     file: /var/log/mysql/error.log
-  - name: mysql-error-log
+  - name: nginx-error-log
     file: /var/log/nginx/error.log
 ```
 
@@ -113,7 +113,7 @@ logs:
 
 ### nginx高速化設定
 sendfile        on;
-#tcp_nopush     on;
+tcp_nopush     on;
 
 ### APとのkeepalive設定
 upstream backend {
@@ -145,8 +145,6 @@ slow_query_log=1
 slow_query_log_file=/var/log/mysql/mysql-slow.log
 long_query_time=0
 ```
-設定したら再起動する
-sudo systemctl restart mysql
 
 #### mysqlのバイナリログを無効化
 ```
@@ -154,12 +152,26 @@ sudo systemctl restart mysql
 innodb_flush_log_at_trx_commit=2
 disable-log-bin=1
 ```
+設定したら再起動する
+sudo systemctl restart mysql
+
 #### 各種設定ファイルをgit管理にする
 git管理ディレクトリに設定ファイルをcpして管理する。ディレクトリ名は`middle-setting`にしておく
+修正したconfファイル以外で管理しておいた方が良いもの
+- ~/env.sh
 ```
 git add --all
 git commit -m "add middleware conf"
 git push origin master
+```
+
+### apからdbへのコネクション設定
+```
+# main.go
+
+db.SetConnMaxLifetime(10 * time.Second)
+db.SetMaxIdleConns(512)
+db.SetMaxOpenConns(512)
 ```
 
 ### deploy.sh,analyze.shの各種設定を変更して動作することを確認する
@@ -176,6 +188,8 @@ tool_setup.shでライブラリ等は導入しているので
 ## tips
 - 間違いとかでgit rebaseでコミットをまとめたりするとpull時にconflictしてめんどいので、rebaseで綺麗にしようとしない
 - スキーマファイルがあるので見て把握すること！
+- スキーマが複雑な場合はtblsでER図を作ってみる
+  - https://zenn.dev/lightkun/articles/6caf17872b6521
 - 修正いれたら空コミットでベンチ結果を保存しておくと良いぞ。issueにも分析結果を貼っておこう
   - `{"pass":true,"score":1108,"messages":[{"text":"GET /api/estate/:id: リクエストに失敗しました (タイムアウトしました)","count":8},{"text":"POST /api/estate/nazotte: リクエストに失敗しました (タイムアウトしました)","count":20}],"reason":"OK","language":"go"}`の後に複数行のベンチ結果を貼り付けて最終行にEOMを入れる
 - ミドルウェアの設定ファイルもgit管理のリポジトリに新しくディレクトリを切って保存しておくと良さそう
@@ -244,11 +258,11 @@ tool_setup.shでライブラリ等は導入しているので
 - 画像データ等がDBに含まれている場合は必要な時以外は取得しないようにカラムを指定してSELECTする
 - ADMIN PREPAREが多数実行されている場合はsql.Open時にinterpolateParamsをtrueにしてみる
   - `db,err:=sql.Open("mysql","isuconp:@tcp(127.0.0.1:3306)/isuconp?interpolateParams=true")`
-- DBとのコネクション数とコネクションプールが適切に設定されているか
-  - `db.SetMaxOpenConns(20)`
-  - `db.SetMaxIdleConns(10)`
 - `exec.Command`でOSコマンドを大量に呼び出している場合はGo実装に変更できないか確認する
 - http.Clientを使っている場合はtransport設定等を見直す
+- 外部サービス呼び出し等で並行処理できる場合はwgとgoroutinで制御する
+  - https://github.com/takonomura/isucon9-qualify/compare/c74a0569985e5b768fcc01138100ab453b95f456..c2cc325925067290a2852ce34f7cb52909425d7a
+-  
 ### DB
 - WHERE句に指定する条件がさまざまで全ての条件にindexを貼るのが現実的でない場合はORDER BYで指定した項目だけにindexを貼ってみる
 - 自動採番のidをPKとしている場合に既存のカラムの複合キーでPKにならないか
@@ -270,3 +284,7 @@ tool_setup.shでライブラリ等は導入しているので
 - 複合indexの順番は気を付ける
   - https://nishinatoshiharu.com/overview-multicolumn-indexes/
 - SQLで大部分を取得してから条件判定で省く場合はSQLの時点で絞りこむようにカラム追加とかをする
+
+### 参考になるサイト集
+- [ISUCON9 予選を全体1位で突破しました](https://www.takono.io/posts/2019/09/isucon/)
+- [ISUCON11 予選問題実践攻略法](https://isucon.net/archives/56082639.html)

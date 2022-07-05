@@ -2,11 +2,11 @@
 
 # !!!!!!!!!要変更!!!!!!!!!!!!
 ISU_GO_PATH=/home/isucon/local/go/bin/go # goバイナリのパス
-REPO_PATH=/home/isucon/isuumo/webapp # リポジトリを管理するパス
-REPO_NAME=isucon10 # リポジトリ名
+REPO_PATH=/home/isucon/isucari/webapp # リポジトリを管理するパス
+REPO_NAME=isucon-9-q # リポジトリ名
 
 # !!!!!!!!!!.ssh/configに設定したhost名を羅列すること!!!!!!!!!!!!!
-for srv in "isu2" "isu3"
+for srv in "isu1"
 do
     echo 'starting tool setup for '${srv}
 
