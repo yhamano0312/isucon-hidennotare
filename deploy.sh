@@ -1,18 +1,18 @@
 #!/bin/bash -eu
 
 # !!!!!!!!!要変更!!!!!!!!!!!!
-REPO_PATH=/home/isucon/isucari/webapp # リポジトリ管理にしたディレクトリのパス
+REPO_PATH=/home/isucon/webapp # リポジトリ管理にしたディレクトリのパス
 ISU_GO_PATH=/home/isucon/local/go/bin/go # goバイナリのパス
-BINARY_FILE_NAME=isucari # 実行バイナリの名前
-SYSTEMD_GO_SERVICE_NAME=${BINARY_FILE_NAME}.golang.service
+BINARY_FILE_NAME=isucondition # 実行バイナリの名前
+SYSTEMD_GO_SERVICE_NAME=${BINARY_FILE_NAME}.go.service
 NGINX_CONF_PATH=/etc/nginx # nginx.confのパス
 NGINX_CONF_FILE_NAME=nginx.conf
 NGINX_SERVER_DIRECTIVE_CONF_PATH=/etc/nginx/sites-available # severディレクティブが設定してあるconfのパス
-NGINX_SERVER_DIRECTIVE_CONF_FILE_NAME=isucari.conf
+NGINX_SERVER_DIRECTIVE_CONF_FILE_NAME=isucondition.conf
 MYSQL_MYCNF_PATH=/etc/mysql/conf.d # my.cnfのパス
-MYSQL_MYCNF_FILE_NAME=mysql.cnf
-MYSQL_MYSQLDCNF_PATH=/etc/mysql/mysql.conf.d # mysqld.cnfのパス
-MYSQL_MYSQLDCNF_FILE_NAME=mysqld.cnf
+MYSQL_MYCNF_FILE_NAME=my.cnf
+MYSQL_MYSQLDCNF_PATH=/etc/mysql/mariadb.conf.d/ # mysqld.cnfのパス
+MYSQL_MYSQLDCNF_FILE_NAME=50-server.cnf
 
 # !!!!!!!!!!!ipを/etc/hostsに設定すること!!!!!!!!!!!!!
 APP_TARGET_SERVER="isu1"

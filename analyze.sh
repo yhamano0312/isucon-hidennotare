@@ -6,16 +6,16 @@ DB_TARGET_SERVER="isu1"
 #DB_TARGET_SERVER="isu2 isu3"
 
 # !!!!!!!!!ディレクトリ名修正!!!!!!!!!
-OUTPUT_FILE="./analyze_output/isucon-9-q/analyze.`date \"+%Y%m%d_%H%M%S\"`"
+OUTPUT_FILE="./analyze_output/isucon11-q-2/analyze.`date \"+%Y%m%d_%H%M%S\"`"
 
 # alp で解析
 echo
 for srv in ${NGINX_TARGET_SERVER}
 do
     echo ":: ACCESS LOG(${srv})       ====>" | tee -a ${OUTPUT_FILE}
-    ssh ${srv} "sudo cat /var/log/nginx/access.log | alp json --sort sum -r" | tee -a ${OUTPUT_FILE}
+    #ssh ${srv} "sudo cat /var/log/nginx/access.log | alp json --sort sum -r" | tee -a ${OUTPUT_FILE}
+    ssh ${srv} "sudo cat /var/log/nginx/access.log | alp json -m \"/api/condition/[0-9a-zA-Z]+,/api/isu/[0-9a-zA-Z]+,/isu/[0-9a-zA-Z]\" --sort sum -r" | tee -a ${OUTPUT_FILE}
     #ssh ${srv} "sudo cat /var/log/nginx/access.log | alp json -m \"/api/estate/[0-9]+,/api/chair/[0-9]+,/api/recommended_estate/[0-9]+,/api/chair/buy/[0-9]+,/api/estate/req_doc/[0-9]+,/images/estate/[0-9a-zA-z]+,/_next/static/chunks/[0-9a-zA-z]+\" --sort sum -r" | tee -a ${OUTPUT_FILE}
-    #ssh ${srv} "sudo cat /var/log/nginx/access.log | alp ltsv -m "/api/schedules/[0-9a-zA-Z]+" --sort avg -r" | tee -a ${OUTPUT_FILE}
 done
 
 #  mysqldumpslowで解析

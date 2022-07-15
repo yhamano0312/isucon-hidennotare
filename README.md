@@ -1,19 +1,10 @@
 # isucon 秘伝のタレ集
 ISUCONに参加するに辺り参考になる資料やコマンドをまとめておく
 
-## 運営提供資料
-[事前講習](https://speakerdeck.com/rosylilly/isucon12-shi-qian-jiang-xi)
-[ハンズオン](https://cdn.discordapp.com/attachments/983875667382927471/984067555171909682/b3e0e29a24ffb23f.pdf)
-
-## 過去開催の解説
-[ISUCON11 予選問題実践攻略法](https://isucon.net/archives/56082639.html)
-
-## newrelic
-[ISUCON10予選問題にNew Relic Infrastructureを入れてみる](https://newrelic.com/jp/blog/how-to-relic/install-newrelic-infrastructure-for-isucon10-qualify)
-
-[インフラストラクチャエージェントの導入](https://docs.newrelic.com/jp/docs/infrastructure/install-infrastructure-agent/linux-installation/tarball-assisted-install-infrastructure-agent-linux/)
-
 ## 競技開始直後にやること
+### GitHubにprivateリポジトリを作成
+競技用のprivateリポジトリを作成する
+
 ### ssh
 sshできることを確認する
 ```
@@ -48,8 +39,7 @@ systemctl list-units --type=service
 - 作成した秘密鍵を他サーバにも移動させる
 - 権限は600にする
 
-### GitHubリポジトリ作成と公開鍵登録
-- リポジトリをプライベートで作成する
+### GitHubリポジトリへの公開鍵登録
 - 作成した公開鍵をdeploy keyとしてリポジトリに登録する。その時にwrite権限のチェックボックスも入れる
 
 ### 各種コードをGitHubにpushする
@@ -66,7 +56,7 @@ git push origin master
 ```
 
 ### newrelicインストール
-- 以下のURLから出力されるワンライナーを叩く
+- 以下のURLから出力されるワンライナーを用意された各サーバで叩く
   - https://one.newrelic.com/launcher/nr1-core.explorer?pane=eyJuZXJkbGV0SWQiOiJucjEtY29yZS5saXN0aW5nIn0=&cards[0]=eyJuZXJkbGV0SWQiOiJucjEtaW5zdGFsbC1uZXdyZWxpYy5ucjEtaW5zdGFsbC1uZXdyZWxpYyIsImFjdGl2ZUNvbXBvbmVudCI6IlZUU09FbnZpcm9ubWVudCIsInBhdGgiOiJndWlkZWQifQ==
 
 - /etc/newrelic-infra.ymlにenable_process_metrics: trueを設定
@@ -89,6 +79,7 @@ logs:
 ### tool_setup.shの各種設定を変更して実行する
 
 ### nginx,mysqlの初期設定
+他サーバにはdeploy.shでデプロイするので1サーバでだけ設定する
 
 #### nginx設定
 ```
@@ -128,13 +119,16 @@ upstream backend {
     gzip_min_length 1k;
 
 ### APとのkeepalive設定
-    proxy_http_version 1.1;
-    proxy_set_header Connection "";
-    keepalive_requests 10000;
-    #### proxy_passは書き換える
-    proxy_pass http://backend;
+      proxy_http_version 1.1;
+      proxy_set_header Connection "";
+      keepalive_requests 10000;
+      #### proxy_passは書き換える
+      proxy_pass http://backend;
 ```
-設定したら再起動する
+設定したら設定ファイルの文法を確認し、再起動する
+
+sudo nginx -t
+
 sudo systemctl restart nginx
 
 #### mysqlのスロークエリログ設定
@@ -153,6 +147,7 @@ innodb_flush_log_at_trx_commit=2
 disable-log-bin=1
 ```
 設定したら再起動する
+
 sudo systemctl restart mysql
 
 #### 各種設定ファイルをgit管理にする
@@ -262,7 +257,11 @@ tool_setup.shでライブラリ等は導入しているので
 - http.Clientを使っている場合はtransport設定等を見直す
 - 外部サービス呼び出し等で並行処理できる場合はwgとgoroutinで制御する
   - https://github.com/takonomura/isucon9-qualify/compare/c74a0569985e5b768fcc01138100ab453b95f456..c2cc325925067290a2852ce34f7cb52909425d7a
--  
+- 更新がかからないものは起動時にキャッシュしてDBへのアクセスを減らす
+  - https://github.com/takonomura/isucon9-qualify/commit/8f6d41ee81fc99ab47357b2c4f916ab0529fedf9
+- 外部APIが存在していて、過負荷等でエラーになる場合はリトライさせる
+  - https://github.com/takonomura/isucon9-qualify/commit/5f6a753377b60a9a935b3b0f9d7128c5057d087c
+- 
 ### DB
 - WHERE句に指定する条件がさまざまで全ての条件にindexを貼るのが現実的でない場合はORDER BYで指定した項目だけにindexを貼ってみる
 - 自動採番のidをPKとしている場合に既存のカラムの複合キーでPKにならないか
@@ -287,4 +286,5 @@ tool_setup.shでライブラリ等は導入しているので
 
 ### 参考になるサイト集
 - [ISUCON9 予選を全体1位で突破しました](https://www.takono.io/posts/2019/09/isucon/)
+- [ISUCON10予選に参加しました](https://blog.recruit.co.jp/rls/2020-09-25-isucon10-qualify/)
 - [ISUCON11 予選問題実践攻略法](https://isucon.net/archives/56082639.html)
