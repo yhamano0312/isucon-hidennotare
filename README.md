@@ -108,16 +108,19 @@ tcp_nopush     on;
 
 ### APとのkeepalive設定
 upstream backend {
-        server localhost:1323;
+        server 127.0.0.1:1323;
         keepalive 32;
 }
 
 ## serverディレクティブ
-### gzip設定
+### gzip & client_body_buffer_size設定
     gzip on;
     gzip_types text/css text/javascript application/javascript application/xjavascript application/json;
     gzip_min_length 1k;
 
+    client_body_buffer_size 5m;
+
+## locationディレクティブ
 ### APとのkeepalive設定
       proxy_http_version 1.1;
       proxy_set_header Connection "";
@@ -138,6 +141,7 @@ sudo systemctl restart nginx
 slow_query_log=1
 slow_query_log_file=/var/log/mysql/mysql-slow.log
 long_query_time=0
+max_connections = 1024
 ```
 
 #### mysqlのバイナリログを無効化
@@ -160,13 +164,18 @@ git commit -m "add middleware conf"
 git push origin master
 ```
 
-### apからdbへのコネクション設定
+### apのデフォルト設定
 ```
 # main.go
 
+# apからdbへのコネクション設定
 db.SetConnMaxLifetime(10 * time.Second)
 db.SetMaxIdleConns(512)
 db.SetMaxOpenConns(512)
+
+# 自動prepareの無効化
+db,err:=sql.Open("mysql","isuconp:@tcp(127.0.0.1:3306)/isuconp?interpolateParams=true")
+
 ```
 
 ### deploy.sh,analyze.shの各種設定を変更して動作することを確認する
@@ -204,6 +213,10 @@ tool_setup.shでライブラリ等は導入しているので
   - https://zenn.dev/hiroakey/articles/9f68ad249af20c
     - 日本語検索ならINDEXにngramをつける
     - SELECTにはBOOLEAN MODEを指定するで良さそう
+- sqlxでjoinした結果をstructにbindする
+  - https://arata.hatenadiary.com/entry/2017/08/31/201940
+- sqlxでIN句を使う場合
+  - https://igatea.hatenablog.com/entry/2020/12/22/200000
 
 ## 後片付けチェックリスト
 - [] nginxのロク出力をなくす
@@ -215,6 +228,7 @@ tool_setup.shでライブラリ等は導入しているので
     - https://github.com/yhamano0312/isucon10/commit/3bb1ec43a65f0d08459fb2344321419dd9703f8e
     - https://github.com/Nagarei/isucon11-qualify-test/commit/d5b1378dbe1d5be4dd349e5a312b803307928a5c
 - [] newrelic infrastracture agentのsystemdを止める
+- [] sqliteのクエリログ出力を止める
 - [] 最後にベンチマーク実行→再起動→ブラウザからwebアプリ触る→ベンチマーク実行をやる
 ## チェックポイント
 ### 全般
@@ -229,13 +243,16 @@ tool_setup.shでライブラリ等は導入しているので
     - CPU リソースが足りない問題を複数台を使うことで改善
   - 分散させるのは競技の後半にして、indexとかの修正を先にやる
   - 場合によってはDBサーバを分割させる
-    - https://github.com/Nagarei/isucon11-qualify-test/commit/207ace7d999b0216b5626c248ac87efb22cbd47e
-    - https://github.com/Nagarei/isucon11-qualify-test/commit/fb2f1b56e2eca481ebc6816e7726e83c8509d1aa
   - 分割させたら使ってないサービスの常時起動は切っておく
 - `ベンチマーク実行時にアプリケーションに書き込まれたデータは再起動後にも取得できること`とレギュレーションにあるので再起動した後にブラウザから動作確認すること
   - https://blog.recruit.co.jp/rls/2020-09-25-isucon10-qualify/
   - サーバを分けると再起動時にAPからのDB接続で失敗してAPが立ち上がらないことがあるので、systemdにserviceの最大再起動回数を指定しておく
     - https://matsuu.hatenablog.com/entry/2020/09/13/131145
+    - `/etc/systemd/system/isuumo.go.service`
+```
+[Service]
+StartLimitBurst=999
+```
 - ISUCONのあれこれの内容ができているか確認する
   - https://zenn.dev/daisuzz/scraps/87498988adc162
 ### nginx
@@ -246,13 +263,10 @@ tool_setup.shでライブラリ等は導入しているので
     - https://egapool.hatenablog.com/entry/2020/04/04/141404
   - nginxを複数台にしていると同じファイルでも更新時刻が異なってLast-Modifiedが異なってしまい上手くcacheが効かないのでrsyncで同期等させる(ISUCON本参照)
 - `client request body is buffered to a temporary file`が発生している場合は`client_body_buffer_size`を調整する
-- 
 ### Go
 - DBへのクエリを最小限にするためにキャッシュしてよいものはキャッシュする
   - https://github.com/yhamano0312/isucon10/commit/264ecebe84726f9a4131d20f311e83754083d8d2
 - 画像データ等がDBに含まれている場合は必要な時以外は取得しないようにカラムを指定してSELECTする
-- ADMIN PREPAREが多数実行されている場合はsql.Open時にinterpolateParamsをtrueにしてみる
-  - `db,err:=sql.Open("mysql","isuconp:@tcp(127.0.0.1:3306)/isuconp?interpolateParams=true")`
 - `exec.Command`でOSコマンドを大量に呼び出している場合はGo実装に変更できないか確認する
 - http.Clientを使っている場合はtransport設定等を見直す
 - 外部サービス呼び出し等で並行処理できる場合はwgとgoroutinで制御する
@@ -261,7 +275,9 @@ tool_setup.shでライブラリ等は導入しているので
   - https://github.com/takonomura/isucon9-qualify/commit/8f6d41ee81fc99ab47357b2c4f916ab0529fedf9
 - 外部APIが存在していて、過負荷等でエラーになる場合はリトライさせる
   - https://github.com/takonomura/isucon9-qualify/commit/5f6a753377b60a9a935b3b0f9d7128c5057d087c
-- 
+- キューイングしてレスポンスを返した後に処理を行うのはgoroutineを使うようにする
+  - https://shiimaxx.hatenablog.com/entry/isucon11q
+  - https://github.com/yhamano0312/isucon11-q-2/commit/1673a19edf42013943a7471325e673c96d5902fd
 ### DB
 - WHERE句に指定する条件がさまざまで全ての条件にindexを貼るのが現実的でない場合はORDER BYで指定した項目だけにindexを貼ってみる
 - 自動採番のidをPKとしている場合に既存のカラムの複合キーでPKにならないか
@@ -283,7 +299,11 @@ tool_setup.shでライブラリ等は導入しているので
 - 複合indexの順番は気を付ける
   - https://nishinatoshiharu.com/overview-multicolumn-indexes/
 - SQLで大部分を取得してから条件判定で省く場合はSQLの時点で絞りこむようにカラム追加とかをする
-
+- `too many open files`のエラーが出始めたら該当するsystemd設定のLimitNOFILEの値を増やす
+  - https://qiita.com/SkyLaptor/items/7e57d98d8540296d6143
+- プレースホルダ数の制限があるため、超過するエラーが出た場合はバルクインサートを分割するなりしてプレースホルダ数を減らす
+  - https://blog.pinkumohikan.com/entry/workaround-for-mysql-too-many-placeholders-error
+  - https://github.com/yhamano0312/isucon11-q-2/commit/5b7291eea679fbbafd07b620e857ef7ea7c4a96e
 ### 参考になるサイト集
 - [ISUCON9 予選を全体1位で突破しました](https://www.takono.io/posts/2019/09/isucon/)
 - [ISUCON10予選に参加しました](https://blog.recruit.co.jp/rls/2020-09-25-isucon10-qualify/)
